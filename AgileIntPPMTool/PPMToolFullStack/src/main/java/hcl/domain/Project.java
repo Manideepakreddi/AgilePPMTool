@@ -116,4 +116,13 @@ public class Project {
 
 
 */
+    @PrePersist
+    protected void onCreate(){
+        this.created_At = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        this.updated_At = new Date();
+    }
 }

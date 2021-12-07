@@ -9,6 +9,7 @@ class Dashboard extends Component {
   componentDidMount() {
     this.props.getProjects();
   }
+
   render() {
     const { projects } = this.props.project;
 
