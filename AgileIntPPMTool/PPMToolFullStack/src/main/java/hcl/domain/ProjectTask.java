@@ -3,6 +3,8 @@ package hcl.domain;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +29,10 @@ public class ProjectTask {
     private Integer priority;
     private Date dueDate;
     //ManyToOne with Backlog
-
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH) 
+    @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
+    @JsonIgnore
+    private Backlog backlog;
     @Column(updatable = false)
     private String projectIdentifer;
     private Date create_At;
