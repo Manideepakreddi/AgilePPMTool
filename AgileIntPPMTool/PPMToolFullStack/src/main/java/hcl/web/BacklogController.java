@@ -1,7 +1,5 @@
 package hcl.web;
 
- 
- 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,36 +17,51 @@ import javax.validation.Valid;
 @CrossOrigin
 public class BacklogController {
 
-    @Autowired
-    private ProjectTaskService projectTaskService;
+	@Autowired
+	private ProjectTaskService projectTaskService;
 
-    @Autowired
-    private MapValidationErrorService mapValidationErrorService;
+	@Autowired
+	private MapValidationErrorService mapValidationErrorService;
 
+	@PostMapping("/{backlog_id}")
+	public ResponseEntity<?> addPTtoBacklog(@Valid @RequestBody ProjectTask projectTask, BindingResult result,
+			@PathVariable String backlog_id) {
 
-    @PostMapping("/{backlog_id}")
-    public ResponseEntity<?> addPTtoBacklog(@Valid @RequestBody ProjectTask projectTask,
-                                            BindingResult result, @PathVariable String backlog_id){
+		ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
+		if (errorMap != null)
+			return errorMap;
 
-        ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
-        if (errorMap != null) return errorMap;
+		ProjectTask projectTask1 = projectTaskService.addProjectTask(backlog_id, projectTask);
 
-        ProjectTask projectTask1 = projectTaskService.addProjectTask(backlog_id, projectTask);
+		return new ResponseEntity<ProjectTask>(projectTask1, HttpStatus.CREATED);
 
-        return new ResponseEntity<ProjectTask>(projectTask1, HttpStatus.CREATED);
+	}
 
-    }
-    @GetMapping("/{backlog_id}")
-    public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlog_id){
+	@GetMapping("/{backlog_id}")
+	public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlog_id) {
 
-        return projectTaskService.findBacklogById(backlog_id);
+		return projectTaskService.findBacklogById(backlog_id);
 
-    }
-    @GetMapping("/{backlog_id}/{pt_id}")
-    public ResponseEntity<?> getProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id){
-        ProjectTask projectTask = projectTaskService.findPTByProjectSequence(backlog_id, pt_id);
-        return new ResponseEntity<ProjectTask>( projectTask, HttpStatus.OK);
-    }
+	}
 
+	@GetMapping("/{backlog_id}/{pt_id}")
+	public ResponseEntity<?> getProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id) {
+		ProjectTask projectTask = projectTaskService.findPTByProjectSequence(backlog_id, pt_id);
+		return new ResponseEntity<ProjectTask>(projectTask, HttpStatus.OK);
+	}
+
+	@PatchMapping("/{backlog_id}/{pt_id}")
+	public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask projectTask, BindingResult result,
+			@PathVariable String backlog_id, @PathVariable String pt_id) {
+
+		ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
+		if (errorMap != null)
+			return errorMap;
+
+		ProjectTask updatedTask = projectTaskService.updateByProjectSequence(projectTask, backlog_id, pt_id);
+
+		return new ResponseEntity<ProjectTask>(updatedTask, HttpStatus.OK);
+
+	}
 
 }
