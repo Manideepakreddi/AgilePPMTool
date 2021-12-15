@@ -1,26 +1,23 @@
 package hcl.domain;
 
  
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Date;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-
 @Entity
 public class User implements UserDetails {
     @Id
@@ -83,8 +80,11 @@ public class User implements UserDetails {
     protected void onUpdate(){
         this.update_At = new Date();
     }
-    //UserDetails Interface methods
-    
+
+    /*
+    UserDetails interface methods
+     */
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -114,5 +114,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }
