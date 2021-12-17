@@ -7,6 +7,7 @@ import hcl.domain.Backlog;
 import hcl.domain.Project;
 import hcl.domain.User;
 import hcl.exceptions.ProjectIdException;
+import hcl.exceptions.ProjectNotFoundException;
 import hcl.repositories.BacklogRepository;
 import hcl.repositories.ProjectRepository;
 import hcl.repositories.UserRepository;
@@ -50,7 +51,7 @@ public class ProjectService {
 
 	}
 
-	public Project findProjectByIdentifier(String projectId) {
+	public Project findProjectByIdentifier(String projectId, String username) {
 
 		Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
 
@@ -58,22 +59,20 @@ public class ProjectService {
 			throw new ProjectIdException("Project ID '" + projectId + "' does not exist");
 
 		}
+		  if(!project.getProjectLeader().equals(username)){
+	            throw new ProjectNotFoundException("Project not found in your account");
+	        }
 
 		return project;
 	}
 
-	public Iterable<Project> findAllProjects() {
-		return projectRepository.findAll();
+	public Iterable<Project> findAllProjects(String username) {
+		return projectRepository.findAllByProjectLeader(username);
 	}
 
-	public void deleteProjectByIdentifier(String projectid) {
-		Project project = projectRepository.findByProjectIdentifier(projectid.toUpperCase());
+	public void deleteProjectByIdentifier(String projectid, String username) {
+        projectRepository.delete(findProjectByIdentifier(projectid, username));
 
-		if (project == null) {
-			throw new ProjectIdException("Cannot Project with ID '" + projectid + "'. This project does not exist");
-		}
-
-		projectRepository.delete(project);
 	}
 
 }
