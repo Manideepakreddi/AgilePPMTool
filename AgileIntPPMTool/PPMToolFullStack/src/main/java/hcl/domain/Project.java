@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.ManyToAny;
+
 import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +45,13 @@ public class Project {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
     @JsonIgnore
     private Backlog backlog;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+    
+    private String projectLeader;
+    
 
     /*public Project() {
     }
